@@ -2,7 +2,7 @@ Seeing as there aren't too many 'nice' tools for bluemix and postgres, this (soo
 To use on localhost (or other connection), please specify a localpg.json file with the following json:
   
 {
-  "database": "employees",
+  "database": "",
   "host": "localhost",
   "port": 5432,
   "user": "",
