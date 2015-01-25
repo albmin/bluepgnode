@@ -45,11 +45,9 @@ function getLocalhostCreds(file_path)
 
 /**
  * Method to drop all items within a schema
- * @param req
- * @param res
  * @param schema
  */
-function nuclear_option(req,res, schema)
+function nuclear_option(schema)
 {
     if (typeof schema === 'undefined')
     {
@@ -74,7 +72,7 @@ function nuclear_option(req,res, schema)
             done();
             console.log('db schema successfully nuked');
             //this kills it immediately, probably need a flag if this is module is for multiple transactions
-            process.exit();
+   //         process.exit();
             return;
         });
     });
@@ -86,4 +84,46 @@ function nuclear_option(req,res, schema)
 //{
 //    var xx = 0;
 //}
-nuclear_option();
+
+/**
+ * Method that will insert the values into the json
+ * This method assumes that the json key's coorespond to columns in the db
+ * TODO build a helper function that will take a schema to transpose the values in
+ *  TODO case the column names are different
+ * @param json_data
+ */
+function insert_values(table_name, json_data)
+{
+    pg.connect(psql, function(err,client,done)
+    {
+        if(err)
+        {
+            return console.error("Error requesting client", err);
+        }
+
+        //construct key and value strings
+        var keys = "";
+        var vals = "";
+        for (var i in json_data)
+        {
+            keys += i;
+            keys += ', ';
+            vals += json_data[i];
+            vals += ', ';
+        }
+        //slice off the trailing commas
+        vals.slice(0, -2);
+        keys.slice(0,-2);
+
+        //debug lines
+        console.log(vals);
+        console.log(keys);
+
+        client.query("INSERT INTO " + table_name + "(" + keys+ ")" +
+        " VALUES(" + vals + ")");
+    })
+}
+
+
+//method calls for manual running of this script (not recommended, should be modulized)
+//nuclear_option();
